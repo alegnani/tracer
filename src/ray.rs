@@ -28,7 +28,7 @@ impl Ray {
 }
 
 impl Ray {
-    pub fn color<T: Hittable>(&self, world: &T, depth: u32) -> Color {
+    pub fn color(&self, world: &dyn Hittable, background: Color, depth: u32) -> Color {
         if depth == 0 {
             return Vec3::new();
         }
@@ -36,11 +36,11 @@ impl Ray {
         if let HitType::Hit(rec) = world.hit(&self, 0.001, f64::INFINITY) {
             let scattered = rec.material.scatter(&self, &rec);
             if let Scatter::Scattered(attenuation, scattered_ray) = scattered {
-                return attenuation * scattered_ray.color(world, depth - 1);
+                return attenuation * scattered_ray.color(world, background, depth - 1);
             }
             let ret = match scattered {
                 Scatter::Scattered(attenuation, scattered_ray) => {
-                    attenuation * scattered_ray.color(world, depth - 1)
+                    attenuation * scattered_ray.color(world, background, depth - 1)
                 }
                 Scatter::Light(tint) => tint,
                 Scatter::Absorbed => Vec3::new(),
@@ -48,12 +48,12 @@ impl Ray {
             return ret;
         }
 
-        let unit_dir = self.dir.unit_vector();
+        // let unit_dir = self.dir.unit_vector();
         // map y-component to 1 (top of viewport) and 0 (bottom of viewport)
-        let t = 0.5 * (unit_dir.y() + 1.);
-        //return gradient from blue (top) and white (bottom)
-        //Color::from(0.3, 0.3, 0.9) * t + Color::from(0.5, 0.7, 1.) * (1. - t)
-        Color::from(0.05, 0.05, 0.05)
+        // let t = 0.5 * (unit_dir.y() + 1.);
+        // return gradient from blue (top) and white (bottom)
+        // Color::from(0.3, 0.3, 0.9) * t + Color::from(0.5, 0.7, 1.) * (1. - t)
+        background
     }
 
     pub fn reflect(&self, normal: &Vec3) -> Vec3 {

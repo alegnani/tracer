@@ -67,6 +67,10 @@ impl HittableList {
         self.objects = vec![];
     }
 
+    pub fn size(&self) -> usize {
+        self.objects.len()
+    }
+
     pub fn add(&mut self, obj: Arc<dyn Hittable>) {
         self.objects.push(obj);
     }

@@ -9,3 +9,6 @@ edition = "2021"
 rand = "0.8"
 threadpool = "1"
 rayon = "1"
+
+[profile.release]
+debug = true
