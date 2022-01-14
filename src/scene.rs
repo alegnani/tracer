@@ -81,7 +81,7 @@ impl Scene {
         self.materials.push(material.clone());
     }
 
-    pub fn add_object(&mut self, obj: Arc<dyn Hittable>) {
+    pub fn add_object(&mut self, obj: Box<dyn Hittable>) {
         self.world.add(obj);
     }
 
@@ -210,25 +210,25 @@ mod test {
         let ground = Arc::new(Diffuse::new(0.5, 0.5, 0.5));
         let light = Arc::new(Light::new(1., 1., 0.8));
         let metal = Arc::new(Metal::from(Color::from(0.5, 0.5, 0.5), 0.05));
-        world.add(Arc::new(Sphere::from(
+        world.add(Box::new(Sphere::from(
             Point3::from(0., -1000., 0.),
             1000.,
             ground.clone(),
         )));
 
-        world.add(Arc::new(Sphere::from(
+        world.add(Box::new(Sphere::from(
             Point3::from(8., 2., -0.6),
             0.3,
             light.clone(),
         )));
 
-        world.add(Arc::new(Sphere::from(
+        world.add(Box::new(Sphere::from(
             Point3::from(0., 2., -0.4),
             0.3,
             light.clone(),
         )));
 
-        world.add(Arc::new(Sphere::from(
+        world.add(Box::new(Sphere::from(
             Point3::from(4., 1., 0.),
             1.,
             metal.clone(),
@@ -253,7 +253,7 @@ mod test {
                     } else {
                         Arc::new(Dielectric::new(1.5))
                     };
-                    let sphere = Arc::new(Sphere::from(center, 0.2, material));
+                    let sphere = Box::new(Sphere::from(center, 0.2, material));
                     world.add(sphere);
                 }
             }

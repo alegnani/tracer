@@ -48,6 +48,12 @@ impl Camera {
         Self::new(from, at, vup, 90., 16. / 9.)
     }
 
+    pub fn translate(&mut self, x: f64, y: f64, z: f64) {
+        let trans = Vec3::from(x, y, z);
+        self.origin += trans;
+        self.lower_left_corner += trans;
+    }
+
     pub fn get_ray(&self, u: f64, v: f64) -> Ray {
         Ray::from(
             self.origin,

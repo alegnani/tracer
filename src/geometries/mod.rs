@@ -4,7 +4,9 @@ use crate::materials::Material;
 use crate::ray::Ray;
 use crate::utils::vec3::{Point3, Vec3};
 
+pub mod rectangle;
 pub mod sphere;
+pub mod triangle;
 
 pub enum HitType {
     NoHit,
@@ -25,7 +27,7 @@ impl HitRecord {
         t: f64,
         p: Point3,
         outward_normal: Vec3,
-        material_ptr: Arc<dyn Material>,
+        material: Arc<dyn Material>,
     ) -> Self {
         let front_face = outward_normal.dot(&ray.dir()) < 0.;
         let normal = if front_face {
@@ -33,7 +35,6 @@ impl HitRecord {
         } else {
             -outward_normal
         };
-        let material = material_ptr.clone();
         HitRecord {
             p,
             normal,
@@ -48,9 +49,8 @@ pub trait Hittable: Send + Sync {
     fn hit(&self, ray: &Ray, t_min: f64, t_max: f64) -> HitType;
 }
 
-#[derive(Clone)]
 pub struct HittableList {
-    objects: Vec<Arc<dyn Hittable>>,
+    objects: Vec<Box<dyn Hittable>>,
 }
 
 impl HittableList {
@@ -59,7 +59,7 @@ impl HittableList {
         HittableList { objects }
     }
 
-    pub fn from(objects: Vec<Arc<dyn Hittable>>) -> Self {
+    pub fn from(objects: Vec<Box<dyn Hittable>>) -> Self {
         HittableList { objects }
     }
 
@@ -71,7 +71,7 @@ impl HittableList {
         self.objects.len()
     }
 
-    pub fn add(&mut self, obj: Arc<dyn Hittable>) {
+    pub fn add(&mut self, obj: Box<dyn Hittable>) {
         self.objects.push(obj);
     }
 }

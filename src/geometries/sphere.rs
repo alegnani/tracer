@@ -1,3 +1,4 @@
+use std::ops::Deref;
 use std::sync::Arc;
 
 use super::HitRecord;
@@ -55,7 +56,8 @@ impl Hittable for Sphere {
         let t = root;
         let p = ray.at(t);
         let outward_normal = (p - self.center) / self.radius;
-        let rec = HitRecord::from(ray, t, p, outward_normal, self.material.clone());
+        let material = self.material.clone();
+        let rec = HitRecord::from(ray, t, p, outward_normal, material);
 
         HitType::Hit(rec)
     }
